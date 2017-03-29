@@ -1,3 +1,5 @@
+state = require "src.game_states.main.init"
+
 updates = {
    input = true,
    player = false,
@@ -14,9 +16,9 @@ local keys = {
 local bindings = {
    up = function ()
       -- Check if tile is walkable
-      local x, y = map:convertPixelToTile(player.x, player.y)
+      local x, y = state.map:convertPixelToTile(player.x, player.y)
       
-      if map.layers.pathing.data[y - 1][x].properties.walkable then
+      if state.map.layers.pathing.data[y - 1][x].properties.walkable then
 	 player:goUp()
 	 
 	 updates.input = false
@@ -26,9 +28,9 @@ local bindings = {
    
    down = function ()
       -- Check if tile is walkable
-      local x, y = map:convertPixelToTile(player.x, player.y)
+      local x, y = state.map:convertPixelToTile(player.x, player.y)
       
-      if map.layers.pathing.data[y + 1][x].properties.walkable then
+      if state.map.layers.pathing.data[y + 1][x].properties.walkable then
 	 player:goDown()
 	 
 	 updates.input = false
@@ -38,9 +40,9 @@ local bindings = {
    
    right = function ()
       -- Check if tile is walkable
-      local x, y = map:convertPixelToTile(player.x, player.y)
+      local x, y = state.map:convertPixelToTile(player.x, player.y)
       
-      if map.layers.pathing.data[y][x + 1].properties.walkable then
+      if state.map.layers.pathing.data[y][x + 1].properties.walkable then
 	 player:goRight()
 	 
 	 updates.input = false
@@ -50,9 +52,9 @@ local bindings = {
 
    left = function ()
       -- Check if tile is walkable
-      local x, y = map:convertPixelToTile(player.x, player.y)
+      local x, y = state.map:convertPixelToTile(player.x, player.y)
       
-      if map.layers.pathing.data[y][x - 1].properties.walkable then
+      if state.map.layers.pathing.data[y][x - 1].properties.walkable then
 	 player:goLeft()
 
 	 updates.input = false

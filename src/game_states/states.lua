@@ -1,5 +1,5 @@
 local states = {
-   main = { }
+   main = require "src.game_states.main.init"
 }
 
 -- Load each game state
