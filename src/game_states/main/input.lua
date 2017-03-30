@@ -1,4 +1,4 @@
-state = require "src.game_states.main.init"
+local state = require "src.game_states.main.init"
 
 updates = {
    input = true,
@@ -10,7 +10,9 @@ local keys = {
    w = "up",
    a = "left",
    s = "down",
-   d = "right"
+   d = "right",
+
+   escape = "pause_menu"
 }
 
 local bindings = {
@@ -60,6 +62,10 @@ local bindings = {
 	 updates.input = false
 	 updates.player = true
       end
+   end,
+
+   pause_menu = function (game_state)
+      game_state.current = game_state.menu
    end
 }
 
