@@ -27,10 +27,6 @@ state.pause_menu = {
 state.current = state.pause_menu
 state.selection = 1
 
-function state.update(dt)
-   
-end
-
 function state.draw(width, height)
    for i, option in ipairs(state.current) do
       text = option.text
@@ -40,6 +36,14 @@ function state.draw(width, height)
       love.graphics.draw(text, (width / 2) - (text:getWidth() / 2), i * 100 + 50)
 
       love.graphics.setColor(255, 255, 255)
+   end
+end
+
+function state.inputHandler(game_state, k)
+   local action = state.input.keys[k]
+      
+   if action then
+      state.input.bindings[action](game_state)
    end
 end
 

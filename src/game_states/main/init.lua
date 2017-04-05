@@ -1,6 +1,8 @@
 local sti = require "src.sti"
+local Entity = require "src.entity"
 
 local state = { }
+state.updates = require "src.game_states.main.updates"
 
 -- Load map
 state.map = sti("assets/maps/simple_lava.lua")
@@ -21,18 +23,14 @@ for k, object in pairs(state.map.objects) do
    end
 end
 
+player = Entity.newInstance{name = "player", x = state.map.spawn.x + 16, y = state.map.spawn.y + 16}
+
 function state.update(dt)
    -- Update map animations
    state.map:update(dt)
 
-   -- Break here if player update flag is not set
-   if updates.player == false then return end
-
-   -- Update update flags
-   if player:update(dt) then
-      updates.player = false
-      updates.input = true
-   end
+   update = state.updates.current.update
+   if update then update(dt) end
 end
 
 function state.draw(width, height)
@@ -44,6 +42,12 @@ function state.draw(width, height)
 
    -- Draw map
    state.map:draw()
+end
+
+function state.inputHandler(game_state, k)
+   local action = state.updates.current.keys[k]
+   
+   if action then state.input.bindings[action](game_state) end
 end
 
 return state

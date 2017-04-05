@@ -3,7 +3,9 @@ state = require "src.game_states.menu.init"
 local keys = {
    w = "prev_selection",
    s = "next_selection",
+   
    tab  = "choose_selection",
+   ["return"] = "choose_selection",
    
    escape = "exit_menu"
 }

@@ -1,20 +1,5 @@
 local state = require "src.game_states.main.init"
 
-updates = {
-   input = true,
-   player = false,
-   entities = false
-}
-
-local keys = {
-   w = "up",
-   a = "left",
-   s = "down",
-   d = "right",
-
-   escape = "pause_menu"
-}
-
 local bindings = {
    up = function ()
       -- Check if tile is walkable
@@ -22,10 +7,9 @@ local bindings = {
       
       if state.map.layers.pathing.data[y - 1][x].properties.walkable then
 	 player:goUp()
-	 
-	 updates.input = false
-	 updates.player = true
       end
+
+      state.updates.current = state.updates.player
    end,
    
    down = function ()
@@ -34,10 +18,9 @@ local bindings = {
       
       if state.map.layers.pathing.data[y + 1][x].properties.walkable then
 	 player:goDown()
-	 
-	 updates.input = false
-	 updates.player = true
       end
+
+      state.updates.current = state.updates.player
    end,
    
    right = function ()
@@ -46,10 +29,9 @@ local bindings = {
       
       if state.map.layers.pathing.data[y][x + 1].properties.walkable then
 	 player:goRight()
-	 
-	 updates.input = false
-	 updates.player = true
       end
+
+      state.updates.current = state.updates.player
    end,
 
    left = function ()
@@ -58,10 +40,9 @@ local bindings = {
       
       if state.map.layers.pathing.data[y][x - 1].properties.walkable then
 	 player:goLeft()
-
-	 updates.input = false
-	 updates.player = true
       end
+
+      state.updates.current = state.updates.player
    end,
 
    pause_menu = function (game_state)
