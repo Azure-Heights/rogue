@@ -27,10 +27,15 @@ end
 
 local function newInstance(args)
    -- Create new instance from sprite bank
+   default = sprite_bank[args.name]
+   
    local instance =  {
-      sprite = sprite_bank[args.name],
+      sprite = default,
 
-      curr_animation = sprite_bank[args.name].animations.stationary,
+      x_offset = default.x_offset or 16,
+      y_offset = default.y_offset or 16,
+
+      curr_animation = default.animations.stationary,
       curr_frame = 1,
       ct = 0,
 
@@ -41,15 +46,16 @@ local function newInstance(args)
       -- Draw with position adjustments
       love.graphics.draw(image_bank[self.sprite.sheet],
 			 self.curr_animation[self.curr_frame],
-			 x - 16, y - 16, self.rotation, 1, 1, 16, 16)
+			 x - self.x_offset, y - self.y_offset, self.rotation, 1, 1, 16, 16)
    end
 
    instance.update = function(self, dt)
       -- Update current frame time, advance if ct > frame duration
       self.ct = self.ct + dt
       if self.sprite.frame_duration and self.ct > self.sprite.frame_duration then
-	 self.ct = 0
+	 self.ct = self.ct - self.sprite.frame_duration
 	 self.curr_frame = self.curr_frame + 1
+
 	 if self.curr_frame > #self.curr_animation then
 	    self.curr_frame = 1
 	 end

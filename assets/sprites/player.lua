@@ -4,10 +4,13 @@ local image_w = 96
 local image_h = 128
 
 return {
-   name = "mage",
+   name = "player",
    sheet = "assets/sprites/player.png",
    
    frame_duration = .12,
+
+   x_offset = 16,
+   y_offset = 16,
 
    animations = {
       down = {

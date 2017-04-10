@@ -1,3 +1,5 @@
+require "src.lovedebug"
+
 local sti = require "src.sti"
 
 local Sprite = require "src.animated_sprite"
@@ -8,9 +10,14 @@ local game_state = { }
 local width = love.graphics.getWidth()
 local height = love.graphics.getHeight()
 
+math.randomseed(os.time())
+
 function love.load()
    -- Load assets
+   Sprite.load("assets/sprites/eyeball.lua")
    Sprite.load("assets/sprites/player.lua")
+
+   Entity.load("assets/entities/eyeball.lua")
    Entity.load("assets/entities/player.lua")
 
    game_state = require "src.game_states.states"

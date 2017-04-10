@@ -1,47 +1,55 @@
 local state = require "src.game_states.main.init"
 
 local bindings = {
-   up = function ()
+   up = function (game_state, state)
       -- Check if tile is walkable
-      local x, y = state.map:convertPixelToTile(player.x, player.y)
-      
-      if state.map.layers.pathing.data[y - 1][x].properties.walkable then
-	 player:goUp()
-      end
+      local x, y = state.map:convertPixelToTile(player.px, player.py)
 
-      state.updates.current = state.updates.player
+      local properties = state.map.layers.pathing.data[y - 1][x].properties
+
+      if properties[player.movement] then
+	 state:moveEntity(player, "up")
+	 state.updates.current = state.updates.player
+      end
    end,
    
-   down = function ()
+   down = function (game_state, state)
       -- Check if tile is walkable
-      local x, y = state.map:convertPixelToTile(player.x, player.y)
+      local x, y = state.map:convertPixelToTile(player.px, player.py)
       
-      if state.map.layers.pathing.data[y + 1][x].properties.walkable then
-	 player:goDown()
-      end
+      local properties = state.map.layers.pathing.data[y + 1][x].properties
 
-      state.updates.current = state.updates.player
+      if properties[player.movement] then
+	 state:moveEntity(player, "down")
+	 state.updates.current = state.updates.player
+      end
    end,
    
-   right = function ()
+   right = function (game_state, state)
       -- Check if tile is walkable
-      local x, y = state.map:convertPixelToTile(player.x, player.y)
+      local x, y = state.map:convertPixelToTile(player.px, player.py)
       
-      if state.map.layers.pathing.data[y][x + 1].properties.walkable then
-	 player:goRight()
-      end
+      local properties = state.map.layers.pathing.data[y][x + 1].properties
 
-      state.updates.current = state.updates.player
+      if properties[player.movement] then
+	 state:moveEntity(player, "right")
+	 state.updates.current = state.updates.player
+      end
    end,
 
-   left = function ()
+   left = function (game_state, state)
       -- Check if tile is walkable
-      local x, y = state.map:convertPixelToTile(player.x, player.y)
+      local x, y = state.map:convertPixelToTile(player.px, player.py)
       
-      if state.map.layers.pathing.data[y][x - 1].properties.walkable then
-	 player:goLeft()
-      end
+      local properties =  state.map.layers.pathing.data[y][x - 1].properties
 
+      if properties[player.movement] then
+	 state:moveEntity(player, "left")
+	 state.updates.current = state.updates.player
+      end
+   end,
+
+   pass = function ()
       state.updates.current = state.updates.player
    end,
 
