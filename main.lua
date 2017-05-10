@@ -1,9 +1,9 @@
 require "src.lovedebug"
 
-local sti = require "src.sti"
+require "src.utils"
 
-local Sprite = require "src.animated_sprite"
-local Entity = require "src.entity"
+Sprite = require "src.animated_sprite"
+Entity = require "src.entity"
 
 local game_state = { }
 
@@ -24,17 +24,19 @@ function love.load()
 end
 
 function love.update(dt)
-   local update = game_state.current.update
-   if update then update(dt) end
+   if game_state.current.update then
+      game_state.current:update(dt)
+   end
 end
 
 function love.draw()
-   local draw = game_state.current.draw
-
-   if draw then draw(width, height) end
+   if game_state.current.draw then
+      game_state.current:draw(width, height)
+   end
 end
 
 function love.keypressed(k)
-   local handler = game_state.current.inputHandler
-   if handler then handler(game_state, k) end
+   if game_state.current.inputHandler then
+      game_state.current:inputHandler(k)
+   end
 end

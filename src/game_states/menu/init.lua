@@ -1,8 +1,9 @@
 require "love.graphics"
 
-local menu_font = love.graphics.newFont("assets/fonts/future_time_splitters.otf", 75)
+local state = require "src.game_states.menu.state"
+state.input = require "src.game_states.menu.input"
 
-local state = { }
+local menu_font = love.graphics.newFont("assets/fonts/future_time_splitters.otf", 75)
 
 state.pause_menu = {
    { text = love.graphics.newText(menu_font, "Resume"),
@@ -27,7 +28,7 @@ state.pause_menu = {
 state.current = state.pause_menu
 state.selection = 1
 
-function state.draw(width, height)
+function state.draw(self, width, height)
    for i, option in ipairs(state.current) do
       text = option.text
       
@@ -39,7 +40,7 @@ function state.draw(width, height)
    end
 end
 
-function state.inputHandler(game_state, k)
+function state.inputHandler(self, game_state, k)
    local action = state.input.keys[k]
       
    if action then

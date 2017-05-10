@@ -1,4 +1,4 @@
-state = require "src.game_states.menu.init"
+local state = require "src.game_states.menu.state"
 
 local keys = {
    w = "prev_selection",

@@ -1,6 +1,89 @@
-local Sprite = require "src.animated_sprite"
+local state = require "src.game_states.main.state"
 
 local entity_bank = { }
+
+local dirs = {
+   up = { x = 0, y = -1 },
+   down = { x = 0, y = 1 },
+   left = { x = -1, y = 0 },
+   right = { x = 1, y = 0 }
+}
+
+local function movement_animation (self, dir)
+   local dpx = dirs[dir].x
+   local dpy = dirs[dir].y
+
+   self.sprite:setAnimation(dir)
+   
+   coroutine.yield()
+
+   for i = 1, 32 do
+      self.px = self.px + dpx
+      self.py = self.py + dpy
+      coroutine.yield()
+   end
+   
+   self.sprite:setAnimation("stationary")
+   
+   return true
+end
+
+local entity_prototype = {
+   turn = function (self)
+      if self.turn_tick >= 1 then
+	 self.turn_tick = self.turn_tick - 1
+	 
+	 entity_bank[self.name].turn(self, state)
+	 
+	 return true
+      end
+   end,
+   
+   turnTick = function (self)
+      self.turn_tick = self.turn_tick + self.speed
+   end,
+
+   update = function(self, dt)
+      return self:__update(dt)
+   end,
+   
+   draw = function (self)
+      self.sprite:draw(self.px, self.py)
+   end,
+
+   move = function (self, dir)
+      local anim = coroutine.wrap(movement_animation)
+      
+      anim(self, dir)
+      state:addAnimation(anim)
+
+      self.x = self.x + dirs[dir].x
+      self.y = self.y + dirs[dir].y
+   end,
+
+   takeDamage = function (self, amount)
+      self.health = self.health - amount
+
+      if self.health <= 0 then
+	 self.die()
+	 return
+      end
+   end,
+
+   heal = function (self, amount, overheal)
+      -- Alter amount to not go over max health
+      if self.health + amount > self.max_health then
+	 local overflow = (self.health + amount) - self.max_health
+	 amount = amount - overflow
+      end
+
+      self.health = self.health + amount
+   end,
+
+   update = function (self, dt)
+      self.sprite:update(dt)
+   end
+}
 
 local function load(entity_def)
    -- Exit if no entity path given
@@ -18,7 +101,7 @@ local function load(entity_def)
    local entity = def_file()
    
    entity_bank[entity.name] = entity
-
+   
    return entity_bank[entity.name]
 end
 
@@ -30,134 +113,42 @@ local function newInstance(args)
 
    local x = args.x or 0
    local y = args.y or 0
-   
-   return {
-      name = default.name,
-      
-      health = default.health or 100,
-      max_health = default.health or 100,
 
-      speed = default.speed or 1,
-      turn_tick = 0,
+   instance = { }
 
-      x = x / 32,
-      y = y / 32,
-      
-      px = x,
-      py = y,
-      
-      new_pos = { x = args.x or 0, y = args.y or 0 },
-
-      movement = default.movement or "walking",
-      to_move = { x = 0, y = 0 },
-
-      sprite = sprite,
-
-      turn = function (self, state)
-	 if self.turn_tick >= 1 then
-	    self.turn_tick = self.turn_tick - 1
-	    default.turn(self, state)
-
-	    return true
-	 end
-      end,
-
-      turnTick = function (self)
-	 self.turn_tick = self.turn_tick + self.speed
-      end,
-
-      update = default.update or function(self, dt)
-	 return self:__update(dt)
-      end,
-      
-      draw = default.draw or function (self)
-	 self.sprite:draw(self.px, self.py)
-      end,
-
-      move = function (self, dir)
-	 if dir == "up" then
-	    self.new_pos = { x = self.px, y = self.py - 32 }
-	 
-	    self.to_move.y = 32
-	    self.y = self.y - 1
-	    
-	    self.sprite:setAnimation("up")
-	 elseif dir == "down" then
-	    self.new_pos = { x = self.px, y = self.py + 32 }
-
-	    self.to_move.y = -32
-	    self.y = self.y + 1
-
-	    self.sprite:setAnimation("down")
-	 elseif dir == "right" then
-	    self.new_pos = { x = self.px + 32, y = self.py }
-
-	    self.to_move.x = 32
-	    self.x = self.x + 1
-
-	    self.sprite:setAnimation("right")
-	 elseif dir == "left" then
-	    self.new_pos = { x = self.px - 32, y = self.py }
-
-	    self.to_move.x = -32
-	    self.x = self.x - 1
-
-	    self.sprite:setAnimation("left")
-	 end
-      end,
-
-      takeDamage = default.takeDamage or function (self, amount)
-	 self.health = self.health - amount
-
-	 if self.health <= 0 then
-	    self.die()
-	    return
-	 end
-      end,
-
-      heal = default.heal or function (self, amount, overheal)
-	 -- Alter amount to not go over max health
-	 if self.health + amount > self.max_health then
-	    local overflow = (self.health + amount) - self.max_health
-	    amount = amount - overflow
-	 end
-
-	 self.health = self.health + amount
-      end,
-
-      __update = function (self, dt)
-	 self.sprite:update(dt)
-
-	 -- Update movement
-     	 if self.to_move.x ~= 0 then
-	    if self.to_move.x > 0 then
-	       self.px = self.px + 1
-	       self.to_move.x = self.to_move.x - 1
-	    else
-	       self.px = self.px - 1
-	       self.to_move.x = self.to_move.x + 1
-	    end
-	 elseif self.to_move.y ~= 0 then
-	    if self.to_move.y > 0 then
-	       self.py = self.py - 1
-	       self.to_move.y = self.to_move.y - 1
-	    else
-	       self.py = self.py + 1
-	       self.to_move.y = self.to_move.y + 1
-	    end
-	 end
-
-	 -- Ensure end pos
-	 if self.to_move.x == 0 and self.to_move.y == 0 then
-	    self.px = self.new_pos.x
-	    self.py = self.new_pos.y
-	    
-	    self.sprite:setAnimation("stationary")
-	 
-	    return true
-	 end
+   -- Initialize variables/functions from entity file
+   for k, v in pairs(entity_bank[args.name]) do
+      instance[k] = v
+   end
+   -- Add pointers to entity functions, allowing overloading from entity file
+   for k, v in pairs(entity_prototype) do
+      if instance[k] and k ~= "turn" then
+	 instance["__" .. k] = entity_prototype[k]
+      else
+	 instance[k] = entity_prototype[k]
       end
-   }
+   end
+
+   -- Set defaults, if values were not present in entity file
+   if instance.health == nil then instance.health = 100 end
+   instance.max_health = instance.health
+
+   if instance.movement == nil then instance.movement = "walking" end
+   
+   if instance.speed == nil then instance.speed = 1 end
+
+   -- Set variables that depend on instance information
+   instance.sprite = sprite
+
+   instance.turn_tick = 0
+
+   instance.x = x / 32
+   instance.y = y / 32
+      
+   instance.px = x
+   instance.py = y
+
+   return instance
 end
 			  
 return {

@@ -15,18 +15,6 @@ layer.reorder_draw = function (self)
    table.sort(self.draw_order, sortY)
 end
 
-layer.turn = function (self, state)
-   for _, entity in ipairs(self.entities) do
-      entity:turn(state)
-   end
-end
-
-layer.turnTick = function (self)
-   for _, entity in ipairs(self.entities) do
-      entity:turnTick()
-   end
-end
-
 layer.draw = function (self)
    self:reorder_draw()
    
