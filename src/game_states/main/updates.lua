@@ -3,18 +3,21 @@ local state = require "src.game_states.main.state"
 local updates = { }
 
 updates.input = {
+   name = "input",
+   
    keys = {
       w = "up",
       a = "left",
       s = "down",
       d = "right",
-
-      space = "pass",
+      
       escape = "pause_menu"
    }
 }
 
 updates.enemies = {
+   name = "enemies",
+   
    keys = { },
    
    update = function (self, dt)

@@ -2,16 +2,8 @@ local state = require "src.game_states.main.state"
 
 local entity_bank = { }
 
-local dirs = {
-   up = { x = 0, y = -1 },
-   down = { x = 0, y = 1 },
-   left = { x = -1, y = 0 },
-   right = { x = 1, y = 0 }
-}
-
 local function movement_animation (self, dir)
-   local dpx = dirs[dir].x
-   local dpy = dirs[dir].y
+   local dpx, dpy = utils.returnDir(dir)
 
    self.sprite:setAnimation(dir)
    
@@ -28,10 +20,36 @@ local function movement_animation (self, dir)
    return true
 end
 
+local function melee_animation (self, dir)
+   local dpx, dpy = utils.returnDir(dir)
+
+--   dpy = dpy * -1
+
+   self.sprite:setAnimation(dir)
+
+   coroutine.yield()
+
+   for i = 1, 10 do
+      self.px = self.px + dpx
+      self.py = self.py + dpy
+      coroutine.yield()
+   end
+
+   for i = 1, 10 do
+      self.px = self.px - dpx
+      self.py = self.py - dpy
+      coroutine.yield()
+   end
+
+   self.sprite:setAnimation("stationary")
+
+   return true
+end
+
 local entity_prototype = {
    turn = function (self)
-      if self.turn_tick >= 1 then
-	 self.turn_tick = self.turn_tick - 1
+      if self.turn_tick >= 1 / self.speed then
+	 self.turn_tick = self.turn_tick - (1 / self.speed)
 	 
 	 entity_bank[self.name].turn(self, state)
 	 
@@ -40,11 +58,7 @@ local entity_prototype = {
    end,
    
    turnTick = function (self)
-      self.turn_tick = self.turn_tick + self.speed
-   end,
-
-   update = function(self, dt)
-      return self:__update(dt)
+      self.turn_tick = self.turn_tick + (1 / player.speed)
    end,
    
    draw = function (self)
@@ -57,15 +71,25 @@ local entity_prototype = {
       anim(self, dir)
       state:addAnimation(anim)
 
-      self.x = self.x + dirs[dir].x
-      self.y = self.y + dirs[dir].y
+      self.x = self.x + utils.dirs[dir].x
+      self.y = self.y + utils.dirs[dir].y
+   end,
+
+   attack = function (self, dir)
+      local anim = coroutine.wrap(melee_animation)
+      local x, y = utils.returnDir(dir)
+
+      state.entities[self.y + y][self.x + x]:takeDamage(10)
+      
+      anim(self, dir)
+      state:addAnimation(anim)
    end,
 
    takeDamage = function (self, amount)
       self.health = self.health - amount
 
       if self.health <= 0 then
-	 self.die()
+	 --self.die()
 	 return
       end
    end,

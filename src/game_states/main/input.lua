@@ -1,57 +1,67 @@
 local game_state = require "src.game_state"
 local state = require "src.game_states.main.state"
 
+local utils = require "src.utils"
+
 local bindings = {
    up = function ()
       -- Check if tile is walkable
-      local x, y = state.map:convertPixelToTile(player.px, player.py)
+      local properties = state.map.layers.pathing.data[player.y - 1][player.x].properties
 
-      local properties = state.map.layers.pathing.data[y - 1][x].properties
-
-      if properties[player.movement] then
-	 state:moveEntity(player, "up")
+      if state.entities[player.y - 1][player.x] == nil then
+	 if properties[player.movement] then
+	    state:moveEntity(player, "up")
+	    state.updates.progress()
+	 end
+      else
+	 player:attack("up")
 	 state.updates.progress()
       end
    end,
    
    down = function ()
       -- Check if tile is walkable
-      local x, y = state.map:convertPixelToTile(player.px, player.py)
-      
-      local properties = state.map.layers.pathing.data[y + 1][x].properties
+      local properties = state.map.layers.pathing.data[player.y + 1][player.x].properties
 
-      if properties[player.movement] then
-	 state:moveEntity(player, "down")
+      if state.entities[player.y + 1][player.x] == nil then
+	 if properties[player.movement] then
+	    state:moveEntity(player, "down")
+	    state.updates.progress()
+	 end
+      else
+	 player:attack("down")
 	 state.updates.progress()
       end
    end,
    
    right = function ()
       -- Check if tile is walkable
-      local x, y = state.map:convertPixelToTile(player.px, player.py)
-      
-      local properties = state.map.layers.pathing.data[y][x + 1].properties
+      local properties = state.map.layers.pathing.data[player.y][player.x + 1].properties
 
-      if properties[player.movement] then
-	 state:moveEntity(player, "right")
+      if state.entities[player.y][player.x + 1] == nil then
+	 if properties[player.movement] then
+	    state:moveEntity(player, "right")
+	    state.updates.progress()
+	 end
+      else
+	 player:attack("right")
 	 state.updates.progress()
       end
    end,
 
    left = function ()
       -- Check if tile is walkable
-      local x, y = state.map:convertPixelToTile(player.px, player.py)
-      
-      local properties = state.map.layers.pathing.data[y][x - 1].properties
+      local properties = state.map.layers.pathing.data[player.y][player.x - 1].properties
 
-      if properties[player.movement] then
-	 state:moveEntity(player, "left")
+      if state.entities[player.y][player.x - 1] == nil then
+	 if properties[player.movement] then
+	    state:moveEntity(player, "left")
+	    state.updates.progress()
+	 end
+      else
+	 player:attack("left")
 	 state.updates.progress()
       end
-   end,
-
-   pass = function ()
-      state.updates.current = state.updates.enemies
    end,
 
    pause_menu = function ()

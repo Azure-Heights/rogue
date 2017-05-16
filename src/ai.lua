@@ -1,4 +1,5 @@
 local ai = { }
+local state = require "src.game_states.main.state"
 
 local opposite_dirs = {
    up = "down",
@@ -7,7 +8,7 @@ local opposite_dirs = {
    left = "right"
 }
 
-ai.getDirections = function (entity, state, px, py)
+ai.getDirections = function (entity, px, py)
    local dirs = { }
 
    local x, y = state.map:convertPixelToTile(px, py)

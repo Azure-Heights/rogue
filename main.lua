@@ -1,6 +1,6 @@
 require "src.lovedebug"
 
-require "src.utils"
+utils = require "src.utils"
 
 Sprite = require "src.animated_sprite"
 Entity = require "src.entity"

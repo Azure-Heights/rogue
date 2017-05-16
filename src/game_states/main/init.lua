@@ -12,32 +12,37 @@ state.map.height = state.map.layers.base.height
 state.floor = state.map.layers.floor
 state.floor.data = state.map.layers.pathing.data
 
+state.progress_now = false
+
 state.animations = { }
 
 state.entities = { }
 for i = 1, state.map.height do
    state.entities[i] = { }
    for j = 1, state.map.width do
-      state.entities[i][j] = { }
+      state.entities[i][j] = nil
    end
 end
 
 function state.update(self, dt)
    -- Update map animations
    self.map:update(dt)
-   
+
+   -- Update entities
    player:update(dt)
    for _, entity in pairs(self.floor.entities) do
       entity:update(dt)
    end
-   
+
+   -- Check if animations have been completed
    if self:updateAnimations() then
       if self.updates.current.update then
 	 self.updates.current:update(dt)
-      end
 
-      if self.updates.current == self.updates.enemies then
-	 self.updates.progress()
+	 -- If there are no animations added, progress
+	 if #self.animations == 0 then
+	    self.updates.progress()
+	 end
       end
    end
 end
@@ -54,9 +59,9 @@ end
 
 function state.moveEntity(self, entity, dir)
    self.entities[entity.y][entity.x] = nil
-   
+
    entity:move(dir)
-   
+
    self.entities[entity.y][entity.x] = entity
 end
 

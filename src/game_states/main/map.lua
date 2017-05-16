@@ -3,6 +3,7 @@ local sti = require "src.sti"
 local map = sti("assets/maps/simple_lava.lua")
 
 local layer = map:addCustomLayer("floor")
+
 layer.entities = { }
 layer.draw_order = { }
 
