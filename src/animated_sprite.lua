@@ -1,5 +1,36 @@
+local Sprite = { }
+
 local sprite_bank = { }
 local image_bank = { }
+
+local sprite_prototype = {
+   draw = function(self, x, y)
+      -- Draw with position adjustments
+      love.graphics.draw(image_bank[self.sprite.sheet],
+			 self.curr_animation[self.curr_frame],
+			 x - self.x_offset, y - self.y_offset, self.rotation, 1, 1, 16, 16)
+   end,
+
+   update = function(self, dt)
+      -- Update current frame time, advance if ct > frame duration
+      self.ct = self.ct + dt
+      if self.sprite.frame_duration and self.ct > self.sprite.frame_duration then
+	 self.ct = self.ct - self.sprite.frame_duration
+	 self.curr_frame = self.curr_frame + 1
+
+	 if self.curr_frame > #self.curr_animation then
+	    self.curr_frame = 1
+	 end
+      end
+   end,
+
+   setAnimation = function(self, animation)
+      -- Reset frame count, change animation
+      self.curr_frame = 1
+      
+      self.curr_animation = self.sprite.animations[animation]
+   end
+}
 
 local function load(sprite_def)
    -- Exit if no sprite path given
@@ -24,6 +55,7 @@ local function load(sprite_def)
 
    return sprite_bank[sprite.name]
 end
+Sprite.load = load
 
 local function newInstance(args)
    -- Create new instance from sprite bank
@@ -41,38 +73,13 @@ local function newInstance(args)
 
       rotation = args.rotation or 0
    }
+
+   for k, v in pairs(sprite_prototype) do
+      instance[k] = v
+   end
    
-   instance.draw = function(self, x, y)
-      -- Draw with position adjustments
-      love.graphics.draw(image_bank[self.sprite.sheet],
-			 self.curr_animation[self.curr_frame],
-			 x - self.x_offset, y - self.y_offset, self.rotation, 1, 1, 16, 16)
-   end
-
-   instance.update = function(self, dt)
-      -- Update current frame time, advance if ct > frame duration
-      self.ct = self.ct + dt
-      if self.sprite.frame_duration and self.ct > self.sprite.frame_duration then
-	 self.ct = self.ct - self.sprite.frame_duration
-	 self.curr_frame = self.curr_frame + 1
-
-	 if self.curr_frame > #self.curr_animation then
-	    self.curr_frame = 1
-	 end
-      end
-   end
-
-   instance.setAnimation = function(self, animation)
-      -- Reset frame count, change animation
-      self.curr_frame = 1
-      
-      self.curr_animation = self.sprite.animations[animation]
-   end
-
    return instance
 end
+Sprite.newInstance = newInstance
 
-return {
-   load = load,
-   newInstance = newInstance
-}
+return Sprite

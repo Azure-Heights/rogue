@@ -21,12 +21,8 @@ updates.enemies = {
    keys = { },
    
    update = function (self, dt)
-      local finished = true
-      
       for _, entity in ipairs(state.floor.entities) do
 	 if entity.turn_tick >= 1 then entity:turn() end
-
-	 if entity.turn_tick >= 1 then finished = false end
       end
    end
 }

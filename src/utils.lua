@@ -14,11 +14,12 @@ local axes = {
 }
 utils.axes = axes
 
-function utils.returnDir(dir)
+local function returnDir(dir)
    return dirs[dir].x, dirs[dir].y
 end
+utils.returnDir = returnDir
 
-function utils.updateCoroutines(routines)
+local function updateCoroutines(routines)
    local dead = { }
    local before = #routines
 
@@ -38,25 +39,30 @@ function utils.updateCoroutines(routines)
       return false, #routines
    end
 end
+utils.updateCoroutines = updateCoroutines
 
-function utils.doOverTable(t, func)
+local function doOverTable(t, func)
    for k, v in pairs(t) do
       func(k, v)
    end
 end
+utils.doOverTable = doOverTable
 
-function utils.idoOverTable(t, func)
+local function idoOverTable(t, func)
    for k, v in ipairs(t) do
       func(k, v)
    end
 end
+utils.idoOverTable = idoOverTable
 
-function utils.dumpTable(t)
+local function dumpTable(t)
    utils.doOverTable(t, function (k, v) print(k, v) end)
 end
+utils.dumpTable = dumpTable
 
-function utils.idumpTable(t)
+local function idumpTable(t)
    utils.idoOverTable(t, function (k, v) print(k, v) end)
 end
+utils.idumpTable = idumpTable
 
 return utils

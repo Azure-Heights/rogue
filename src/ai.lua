@@ -8,7 +8,7 @@ local opposite_dirs = {
    left = "right"
 }
 
-ai.getDirections = function (entity, px, py)
+local function getDirections(entity, px, py)
    local dirs = { }
 
    local x, y = state.map:convertPixelToTile(px, py)
@@ -35,8 +35,9 @@ ai.getDirections = function (entity, px, py)
 
    return dirs
 end
+ai.getDirections = getDirections
 
-ai.getDirectionTo = function (entity, x, y)
+local function getDirectionTo(entity, x, y)
    local x_diff = entity.x - x
    local y_diff = entity.y - y
    
@@ -54,12 +55,14 @@ ai.getDirectionTo = function (entity, x, y)
       end
    end
 end
+ai.getDirectionTo = getDirectionTo
 
-ai.getReverse = function (dir)
+local function getReverse(dir)
    return opposite_dirs[dir]
 end
+ai.getReverse = getReverse
 
-ai.getCoordsInDir = function (x, y, dir)
+local function getCoordsInDir(x, y, dir)
    if dir == "up" then
       return x, y - 1
    elseif dir == "down" then
@@ -70,12 +73,14 @@ ai.getCoordsInDir = function (x, y, dir)
       return x - 1, y
    end
 end
+ai.getCoordsInDir = getCoordsInDir
 
-ai.getDistance = function (entity, x, y)
+local function getDistance(entity, x, y)
    local x = math.abs(entity.x - x)
    local y = math.abs(entity.y - y)
    
    return x, y, math.sqrt(x^2 + y^2)
 end
+ai.getDistance = getDistance
 
 return ai

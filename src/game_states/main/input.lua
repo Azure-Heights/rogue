@@ -1,8 +1,6 @@
 local game_state = require "src.game_state"
 local state = require "src.game_states.main.state"
 
-local utils = require "src.utils"
-
 local bindings = {
    up = function ()
       -- Check if tile is walkable

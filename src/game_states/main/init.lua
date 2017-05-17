@@ -1,18 +1,19 @@
 local state = require "src.game_states.main.state"
 local utils = require "src.utils"
 
+-- Require sub-modules
 state.updates = require "src.game_states.main.updates"
 state.input = require "src.game_states.main.input"
 
+-- Initialize map
 state.map = require "src.game_states.main.map"
 
 state.map.width = state.map.layers.base.width
 state.map.height = state.map.layers.base.height
 
+-- Convenience bindings
 state.floor = state.map.layers.floor
 state.floor.data = state.map.layers.pathing.data
-
-state.progress_now = false
 
 state.animations = { }
 

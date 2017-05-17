@@ -1,3 +1,5 @@
+local Entity = { }
+
 local state = require "src.game_states.main.state"
 
 local entity_bank = { }
@@ -128,6 +130,7 @@ local function load(entity_def)
    
    return entity_bank[entity.name]
 end
+Entity.load = load
 
 local function newInstance(args)
    -- Create new instance from entity bank
@@ -174,8 +177,6 @@ local function newInstance(args)
 
    return instance
 end
+Entity.newInstance = newInstance
 			  
-return {
-   load = load,
-   newInstance = newInstance
-}
+return Entity

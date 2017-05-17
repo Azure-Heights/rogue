@@ -1,8 +1,8 @@
-local states = {
-   main = require "src.game_states.main.init",
-   menu = require "src.game_states.menu.init"
-}
+local game_state = require "src.game_state"
 
-states.current = states.main
+game_state.main = require "src.game_states.main.init"
+game_state.menu = require "src.game_states.menu.init"
 
-return states
+game_state.current = game_state.main
+
+return game_state

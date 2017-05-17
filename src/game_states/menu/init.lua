@@ -1,27 +1,32 @@
 require "love.graphics"
 
+local game_state = require "src.game_state"
+
 local state = require "src.game_states.menu.state"
 state.input = require "src.game_states.menu.input"
 
 local menu_font = love.graphics.newFont("assets/fonts/future_time_splitters.otf", 75)
 
 state.pause_menu = {
-   { text = love.graphics.newText(menu_font, "Resume"),
-     action = function (game_state)
-	game_state.current = game_state.main
-     end
+   {
+      text = love.graphics.newText(menu_font, "Resume"),
+      action = function (game_state)
+	 game_state.current = game_state.main
+      end
    },
    
-   { text = love.graphics.newText(menu_font, "Main Menu"),
-     action = function ()
+   {
+      text = love.graphics.newText(menu_font, "Main Menu"),
+      action = function ()
 
-     end
+      end
    },
    
-   { text = love.graphics.newText(menu_font, "Quit"),
-     action = function () 
-	love.event.quit()
-     end
+   {
+      text = love.graphics.newText(menu_font, "Quit"),
+      action = function () 
+	 love.event.quit()
+      end
    }
 }
 
@@ -40,7 +45,7 @@ function state.draw(self, width, height)
    end
 end
 
-function state.inputHandler(self, game_state, k)
+function state.inputHandler(self, k)
    local action = state.input.keys[k]
       
    if action then
